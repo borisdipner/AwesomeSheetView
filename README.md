@@ -26,7 +26,7 @@ To integrate `AwesomeSheetView` into your project, use Swift Package Manager (SP
 3. Enter the following URL:
 
 ```
-https://github.com/yourusername/AwesomeSheetView.git
+https://github.com/borisdipner/AwesomeSheetView.git
 ```
 
 4. Choose the version you want to install (recommended: `1.0.0` or later).
@@ -36,7 +36,7 @@ https://github.com/yourusername/AwesomeSheetView.git
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/AwesomeSheetView.git
+    git clone https://github.com/borisdipner/AwesomeSheetView.git
     ```
 2. Drag and drop the `AwesomeSheetView` folder into your Xcode project.
 
@@ -144,5 +144,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 Feel free to contribute, report bugs, or suggest features via GitHub Issues.
-
-```
