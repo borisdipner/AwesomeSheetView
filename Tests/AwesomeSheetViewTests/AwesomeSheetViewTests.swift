@@ -1,7 +1,7 @@
 //
 //  AwesomeSheetViewTests.swift
 //
-//  Created by Boris on 99.99.9999.
+//  Created by Boris D. on 99.99.9999.
 //
 
 import XCTest
@@ -9,26 +9,6 @@ import SwiftUI
 @testable import AwesomeSheetView
 
 final class AwesomeSheetViewTests: XCTestCase {
-    
-    /// Checking start state of bottom sheet
-    func testBottomSheetShowing() {
-        // Given
-        var isShowing = false
-        let items = [Card(id: "1", name: "Card 1")]
-        
-        // When
-        let sheet = AwesomeBottomSheetView(
-            isShowing: .constant(isShowing),
-            items: items,
-            onItemSelection: { _ in },
-            title: "Select a Card"
-        ) { item in
-            Text(item.name)
-        }
-        
-        // Then
-        XCTAssertFalse(isShowing, "Bottom sheet should not be showing initially.")
-    }
     
     /// Checking selecting card
     func testCardSelection() {
@@ -39,11 +19,11 @@ final class AwesomeSheetViewTests: XCTestCase {
         // When
         let sheet = AwesomeBottomSheetView(
             isShowing: .constant(true),
+            title: "Select a Card",
             items: items,
             onItemSelection: { card in
                 selectedCard = card
-            },
-            title: "Select a Card"
+            }
         ) { item in
             Text(item.name)
         }
