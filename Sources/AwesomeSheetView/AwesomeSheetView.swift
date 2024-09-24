@@ -1,7 +1,7 @@
 //
 //  AwesomeSheetView.swift
 //
-//  Created by Boris on 99.99.9999.
+//  Created by Boris D. on 99.99.9999.
 //
 
 import SwiftUI
@@ -9,9 +9,9 @@ import SwiftUI
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     
     @Binding var isShowing: Bool
+    var title: String
     var items: [T]
     var onItemSelection: (T) -> Void
-    var title: String
     var content: (T) -> ItemView
     var itemHeight = 58.0
     
@@ -104,5 +104,25 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 16)
         }
+    }
+}
+
+extension View {
+    public func awesomeSheet<ItemView: View, T: Identifiable>(
+        isShowing: Binding<Bool>,
+        items: [T],
+        title: String,
+        onItemSelection: @escaping (T) -> Void,
+        @ViewBuilder content: @escaping (T) -> ItemView
+    ) -> some View {
+        self.overlay(
+            AwesomeBottomSheetView(
+                isShowing: isShowing,
+                title: title,
+                items: items,
+                onItemSelection: onItemSelection,
+                content: content
+            )
+        )
     }
 }

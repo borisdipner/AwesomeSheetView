@@ -1,7 +1,7 @@
 //
 //  Card.swift
 //
-//  Created by Boris on 99.99.9999.
+//  Created by Boris D. on 99.99.9999.
 //
 
 import Foundation
