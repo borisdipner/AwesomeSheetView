@@ -7,20 +7,17 @@
 import SwiftUI
 
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
-    
     @Binding var isShowing: Bool
     var title: String
     var items: [T]
     var onItemSelection: (T) -> Void
     var content: (T) -> ItemView
     var itemHeight = 58.0
+    var bottomContent: (() -> AnyView)? = nil
     
     var body: some View {
-        
         ZStack(alignment: .bottom) {
-            
             if isShowing {
-                
                 BlurView(style: .systemUltraThinMaterial)
                     .ignoresSafeArea()
                 
@@ -40,6 +37,9 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                         contentSection
                     }
                     Spacer()
+                    if let bottomContent = bottomContent {
+                        bottomContent()
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .frame(maxHeight: countHeight())
@@ -56,12 +56,15 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     private func countHeight() -> CGFloat {
         let panSectionHeight = 16.0
         let titleSectionHeight = 62.0
-        let bottomSectionHeight = 33.0
         let itemsVerticalPadding = 16.0
-        let designHeight = panSectionHeight + titleSectionHeight + bottomSectionHeight + itemsVerticalPadding
+        
+        var designHeight = panSectionHeight + titleSectionHeight + itemsVerticalPadding
+        
+        if hasBottomBar {
+            designHeight += 33.0 // Bottom bar height
+        }
         
         let itemsHeight = itemHeight * CGFloat(items.count)
-        
         let totalHeight = designHeight + itemsHeight
         
         let maxScreenHeight = UIScreen.main.bounds.height
@@ -122,6 +125,26 @@ extension View {
                 items: items,
                 onItemSelection: onItemSelection,
                 content: content
+            )
+        )
+    }
+    
+    public func awesomeSheet<ItemView: View, T: Identifiable>(
+        isShowing: Binding<Bool>,
+        items: [T],
+        title: String,
+        onItemSelection: @escaping (T) -> Void,
+        @ViewBuilder content: @escaping (T) -> ItemView,
+        bottomContent: @escaping () -> AnyView
+    ) -> some View {
+        self.overlay(
+            AwesomeBottomSheetView(
+                isShowing: isShowing,
+                title: title,
+                items: items,
+                onItemSelection: onItemSelection,
+                content: content,
+                bottomContent: bottomContent
             )
         )
     }
