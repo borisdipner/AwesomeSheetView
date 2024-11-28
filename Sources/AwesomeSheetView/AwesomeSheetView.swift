@@ -60,8 +60,8 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
         
         var designHeight = panSectionHeight + titleSectionHeight + itemsVerticalPadding
         
-        if hasBottomBar {
-            designHeight += 33.0 // Bottom bar height
+        if bottomContent != nil {
+            designHeight += 72.0 // Bottom bar height
         }
         
         let itemsHeight = itemHeight * CGFloat(items.count)
