@@ -8,13 +8,13 @@ import SwiftUI
 
 public struct UIConfiguration {
     public var itemHeight: CGFloat
-    public var itemsVerticalPadding: CGFloat
+    public var itemsVerticalSpacing: CGFloat
     public init(
         itemHeight: CGFloat = 58.0,
-        itemsVerticalPadding: CGFloat = 16.0
+        itemsVerticalSpacing: CGFloat = 0.0
     ) {
         self.itemHeight = itemHeight
-        self.itemsVerticalPadding = itemsVerticalPadding
+        self.itemsVerticalSpacing = itemsVerticalSpacing
     }
 }
 
@@ -70,11 +70,11 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     
     private func countHeight() -> CGFloat {
         let panSectionHeight = 16.0
-        let titleSectionHeight = 62.0
+        let titleSectionHeight = 52.0
         
         var screenSafeAreaDesignPadding = 180.0
         
-        var designHeight = panSectionHeight + titleSectionHeight + configuration.itemsVerticalPadding
+        var designHeight = panSectionHeight + titleSectionHeight
         
         if bottomContent != nil {
             let bottomContentHeight = 72.0
@@ -83,7 +83,11 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
         }
         
         let itemsHeight = configuration.itemHeight * CGFloat(items.count)
-        let totalHeight = designHeight + itemsHeight
+        var totalHeight = designHeight + itemsHeight
+        if items.count > 0 {
+            let itemsSpacing = configuration.itemsVerticalSpacing * CGFloat(items.count - 1)
+            totalHeight += itemsSpacing
+        }
         
         let maxScreenHeight = UIScreen.main.bounds.height
         let totalMaxHeight = maxScreenHeight - screenSafeAreaDesignPadding
@@ -93,7 +97,7 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     
     @ViewBuilder
     private var contentSection: some View {
-        VStack(spacing: configuration.itemsVerticalPadding) {
+        VStack(spacing: configuration.itemsVerticalSpacing) {
             ForEach(items) { item in
                 content(item)
                     .onTapGesture {
@@ -102,7 +106,8 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
     }
     
     @ViewBuilder
