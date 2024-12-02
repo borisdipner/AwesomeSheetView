@@ -27,6 +27,8 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     var configuration: UIConfiguration
     var bottomContent: (() -> AnyView)? = nil
     
+    let bottomSafeAreaPadding = 33.0
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             if isShowing {
@@ -51,6 +53,7 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                     Spacer()
                     if let bottomContent = bottomContent {
                         bottomContent()
+                            .padding(.bottom, bottomSafeAreaPadding)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -74,7 +77,6 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
         var designHeight = panSectionHeight + titleSectionHeight + configuration.itemsVerticalPadding
         
         if bottomContent != nil {
-            let bottomSafeAreaPadding = 33.0
             let bottomContentHeight = 72.0
             designHeight += bottomContentHeight + bottomSafeAreaPadding
             screenSafeAreaDesignPadding += bottomContentHeight + bottomSafeAreaPadding
