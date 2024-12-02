@@ -6,13 +6,21 @@
 
 import SwiftUI
 
+struct UIConfiguration {
+    var itemHeight: CGFloat
+    var itemsVerticalPadding: CGFloat
+}
+
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     @Binding var isShowing: Bool
     var title: String
     var items: [T]
     var onItemSelection: (T) -> Void
     var content: (T) -> ItemView
-    var itemHeight = 58.0
+    var configuration: UIConfiguration = .init(
+        itemHeight: 58.0,
+        itemsVerticalPadding: 16.0
+    )
     var bottomContent: (() -> AnyView)? = nil
     
     var body: some View {
@@ -56,19 +64,22 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     private func countHeight() -> CGFloat {
         let panSectionHeight = 16.0
         let titleSectionHeight = 62.0
-        let itemsVerticalPadding = 16.0
         
-        var designHeight = panSectionHeight + titleSectionHeight + itemsVerticalPadding
+        var screenSafeAreaDesignPadding = 180.0
+        
+        var designHeight = panSectionHeight + titleSectionHeight + configuration.itemsVerticalPadding
         
         if bottomContent != nil {
-            designHeight += 72.0 // Bottom bar height
+            let bottomSafeAreaPadding = 33.0
+            let bottomContentHeight = 72.0
+            designHeight += bottomContentHeight + bottomSafeAreaPadding
+            screenSafeAreaDesignPadding += bottomContentHeight + bottomSafeAreaPadding
         }
         
-        let itemsHeight = itemHeight * CGFloat(items.count)
+        let itemsHeight = configuration.itemHeight * CGFloat(items.count)
         let totalHeight = designHeight + itemsHeight
         
         let maxScreenHeight = UIScreen.main.bounds.height
-        let screenSafeAreaDesignPadding = 180.0
         let totalMaxHeight = maxScreenHeight - screenSafeAreaDesignPadding
         
         return min(totalHeight, totalMaxHeight)
@@ -76,7 +87,7 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     
     @ViewBuilder
     private var contentSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: configuration.itemsVerticalPadding) {
             ForEach(items) { item in
                 content(item)
                     .onTapGesture {
