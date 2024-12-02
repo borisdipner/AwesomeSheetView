@@ -9,6 +9,13 @@ import SwiftUI
 public struct UIConfiguration {
     public var itemHeight: CGFloat
     public var itemsVerticalPadding: CGFloat
+    public init(
+        itemHeight: CGFloat = 58.0,
+        itemsVerticalPadding: CGFloat = 16.0
+    ) {
+        self.itemHeight = itemHeight
+        self.itemsVerticalPadding = itemsVerticalPadding
+    }
 }
 
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
@@ -17,10 +24,7 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     var items: [T]
     var onItemSelection: (T) -> Void
     var content: (T) -> ItemView
-    var configuration: UIConfiguration = .init(
-        itemHeight: 58.0,
-        itemsVerticalPadding: 16.0
-    )
+    var configuration: UIConfiguration
     var bottomContent: (() -> AnyView)? = nil
     
     var body: some View {
@@ -126,7 +130,7 @@ extension View {
         isShowing: Binding<Bool>,
         items: [T],
         title: String,
-        configuration: UIConfiguration,
+        configuration: UIConfiguration = .init(),
         onItemSelection: @escaping (T) -> Void,
         @ViewBuilder content: @escaping (T) -> ItemView
     ) -> some View {
@@ -146,7 +150,7 @@ extension View {
         isShowing: Binding<Bool>,
         items: [T],
         title: String,
-        configuration: UIConfiguration,
+        configuration: UIConfiguration = .init(),
         onItemSelection: @escaping (T) -> Void,
         @ViewBuilder content: @escaping (T) -> ItemView,
         bottomContent: @escaping () -> AnyView
