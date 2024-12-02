@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum BottomSheetSize {
+public enum BottomSheetSize {
     case half
     case full
     case custom(CGFloat)
@@ -89,7 +89,7 @@ struct AwesomeBottomContentSheetView<Content: View>: View {
 }
 
 extension View {
-    func awesomeContentSheet<Content: View>(
+    public func awesomeContentSheet<Content: View>(
         isShowing: Binding<Bool>,
         title: String? = nil,
         size: BottomSheetSize = .half,
