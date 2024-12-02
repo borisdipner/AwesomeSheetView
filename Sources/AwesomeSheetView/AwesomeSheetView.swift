@@ -6,9 +6,9 @@
 
 import SwiftUI
 
-struct UIConfiguration {
-    var itemHeight: CGFloat
-    var itemsVerticalPadding: CGFloat
+public struct UIConfiguration {
+    public var itemHeight: CGFloat
+    public var itemsVerticalPadding: CGFloat
 }
 
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
@@ -126,6 +126,7 @@ extension View {
         isShowing: Binding<Bool>,
         items: [T],
         title: String,
+        configuration: UIConfiguration,
         onItemSelection: @escaping (T) -> Void,
         @ViewBuilder content: @escaping (T) -> ItemView
     ) -> some View {
@@ -135,7 +136,8 @@ extension View {
                 title: title,
                 items: items,
                 onItemSelection: onItemSelection,
-                content: content
+                content: content,
+                configuration: configuration
             )
         )
     }
@@ -144,6 +146,7 @@ extension View {
         isShowing: Binding<Bool>,
         items: [T],
         title: String,
+        configuration: UIConfiguration,
         onItemSelection: @escaping (T) -> Void,
         @ViewBuilder content: @escaping (T) -> ItemView,
         bottomContent: @escaping () -> AnyView
@@ -155,6 +158,7 @@ extension View {
                 items: items,
                 onItemSelection: onItemSelection,
                 content: content,
+                configuration: configuration,
                 bottomContent: bottomContent
             )
         )
