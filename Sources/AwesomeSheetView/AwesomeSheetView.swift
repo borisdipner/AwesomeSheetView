@@ -27,6 +27,14 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     var configuration: UIConfiguration
     var bottomContent: (() -> AnyView)? = nil
     
+    @State private var contentHeight: CGFloat = 0 // Сохраняем высоту содержимого
+
+    let titleSectionHeight = 52.0
+    let panSectionHeight = 16.0
+    let contentTopPadding = 8.0
+    let contentBottomPadding = 16.0
+    let bottomContentHeight = 72.0
+    
     let bottomSafeAreaPadding = 33.0
     
     var body: some View {
@@ -46,13 +54,30 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                 
                 VStack(spacing: .zero) {
                     panSection
+                        .frame(maxHeight: panSectionHeight)
                     titleSection
+                        .frame(maxHeight: titleSectionHeight)
+                    
+                    // ScrollView с динамической высотой
                     ScrollView {
                         contentSection
+//                            .background(
+//                                GeometryReader { proxy in
+//                                    Color.clear
+//                                        .onAppear {
+//                                            contentHeight = proxy.size.height
+//                                        }
+//                                        .onChange(of: items.count) { _ in
+//                                            contentHeight = proxy.size.height
+//                                        }
+//                                }
+//                            )
                     }
-                    Spacer()
+                    .frame(height: min(contentHeight, countHeight())) // Ограничение высоты
+
                     if let bottomContent = bottomContent {
                         bottomContent()
+                            .frame(maxHeight: bottomContentHeight)
                             .padding(.bottom, bottomSafeAreaPadding)
                     }
                 }
@@ -69,25 +94,25 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     }
     
     private func countHeight() -> CGFloat {
-        let panSectionHeight = 16.0
-        let titleSectionHeight = 52.0
-        
         var screenSafeAreaDesignPadding = 180.0
-        
+        let contentPaddings = contentTopPadding + contentBottomPadding
         var designHeight = panSectionHeight + titleSectionHeight
         
+      
+        
         if bottomContent != nil {
-            let bottomContentHeight = 72.0
             designHeight += bottomContentHeight + bottomSafeAreaPadding
             screenSafeAreaDesignPadding += bottomContentHeight + bottomSafeAreaPadding
         }
         
         let itemsHeight = configuration.itemHeight * CGFloat(items.count)
         var totalHeight = designHeight + itemsHeight
+        var itemsSpacing = 0.0
         if items.count > 0 {
-            let itemsSpacing = configuration.itemsVerticalSpacing * CGFloat(items.count - 1)
+            itemsSpacing = configuration.itemsVerticalSpacing * CGFloat(items.count - 1)
             totalHeight += itemsSpacing
         }
+        contentHeight = contentPaddings + itemsHeight + itemsSpacing
         
         let maxScreenHeight = UIScreen.main.bounds.height
         let totalMaxHeight = maxScreenHeight - screenSafeAreaDesignPadding
@@ -106,8 +131,8 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 16)
+        .padding(.top, contentTopPadding)
+        .padding(.bottom, contentBottomPadding)
     }
     
     @ViewBuilder
@@ -129,49 +154,5 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 16)
         }
-    }
-}
-
-extension View {
-    public func awesomeSheet<ItemView: View, T: Identifiable>(
-        isShowing: Binding<Bool>,
-        items: [T],
-        title: String,
-        configuration: UIConfiguration = .init(),
-        onItemSelection: @escaping (T) -> Void,
-        @ViewBuilder content: @escaping (T) -> ItemView
-    ) -> some View {
-        self.overlay(
-            AwesomeBottomSheetView(
-                isShowing: isShowing,
-                title: title,
-                items: items,
-                onItemSelection: onItemSelection,
-                content: content,
-                configuration: configuration
-            )
-        )
-    }
-    
-    public func awesomeSheet<ItemView: View, T: Identifiable>(
-        isShowing: Binding<Bool>,
-        items: [T],
-        title: String,
-        configuration: UIConfiguration = .init(),
-        onItemSelection: @escaping (T) -> Void,
-        @ViewBuilder content: @escaping (T) -> ItemView,
-        bottomContent: @escaping () -> AnyView
-    ) -> some View {
-        self.overlay(
-            AwesomeBottomSheetView(
-                isShowing: isShowing,
-                title: title,
-                items: items,
-                onItemSelection: onItemSelection,
-                content: content,
-                configuration: configuration,
-                bottomContent: bottomContent
-            )
-        )
     }
 }
