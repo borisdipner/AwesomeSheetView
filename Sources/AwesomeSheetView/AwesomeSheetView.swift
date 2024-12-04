@@ -18,7 +18,6 @@ public struct UIConfiguration {
     }
 }
 
-
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     @Binding var isShowing: Bool
     var title: String
@@ -28,8 +27,6 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     var configuration: UIConfiguration
     var bottomContent: (() -> AnyView)? = nil
     
-    @State private var contentHeight: CGFloat = 0 // Сохраняем высоту содержимого
-
     let titleSectionHeight = 52.0
     let panSectionHeight = 16.0
     let contentTopPadding = 8.0
@@ -58,13 +55,10 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                         .frame(maxHeight: panSectionHeight)
                     titleSection
                         .frame(maxHeight: titleSectionHeight)
-                    
-                    // ScrollView с динамической высотой
                     ScrollView {
                         contentSection
                     }
-                    .frame(height: min(contentHeight, countHeight())) // Ограничение высоты
-
+                    .frame(height: countContentHeight())
                     if let bottomContent = bottomContent {
                         bottomContent()
                             .frame(maxHeight: bottomContentHeight)
@@ -83,12 +77,20 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
         .animation(.easeInOut, value: isShowing)
     }
     
+    private func countContentHeight()  -> CGFloat {
+        let itemsHeight = configuration.itemHeight * CGFloat(items.count)
+       
+        if items.count > 0 {
+            let itemsSpacing = configuration.itemsVerticalSpacing * CGFloat(items.count - 1)
+            return itemsHeight + itemsSpacing
+        } else {
+            return itemsHeight
+        }
+    }
     private func countHeight() -> CGFloat {
         var screenSafeAreaDesignPadding = 180.0
         let contentPaddings = contentTopPadding + contentBottomPadding
         var designHeight = panSectionHeight + titleSectionHeight
-        
-      
         
         if bottomContent != nil {
             designHeight += bottomContentHeight + bottomSafeAreaPadding
@@ -97,12 +99,10 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
         
         let itemsHeight = configuration.itemHeight * CGFloat(items.count)
         var totalHeight = designHeight + itemsHeight
-        var itemsSpacing = 0.0
         if items.count > 0 {
-            itemsSpacing = configuration.itemsVerticalSpacing * CGFloat(items.count - 1)
+            let itemsSpacing = configuration.itemsVerticalSpacing * CGFloat(items.count - 1)
             totalHeight += itemsSpacing
         }
-        contentHeight = contentPaddings + itemsHeight + itemsSpacing
         
         let maxScreenHeight = UIScreen.main.bounds.height
         let totalMaxHeight = maxScreenHeight - screenSafeAreaDesignPadding
@@ -146,7 +146,6 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
         }
     }
 }
-
 
 extension View {
     public func awesomeSheet<ItemView: View, T: Identifiable>(
