@@ -18,6 +18,7 @@ public struct UIConfiguration {
     }
 }
 
+
 struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
     @Binding var isShowing: Bool
     var title: String
@@ -61,17 +62,6 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                     // ScrollView с динамической высотой
                     ScrollView {
                         contentSection
-//                            .background(
-//                                GeometryReader { proxy in
-//                                    Color.clear
-//                                        .onAppear {
-//                                            contentHeight = proxy.size.height
-//                                        }
-//                                        .onChange(of: items.count) { _ in
-//                                            contentHeight = proxy.size.height
-//                                        }
-//                                }
-//                            )
                     }
                     .frame(height: min(contentHeight, countHeight())) // Ограничение высоты
 
@@ -154,5 +144,50 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 16)
         }
+    }
+}
+
+
+extension View {
+    public func awesomeSheet<ItemView: View, T: Identifiable>(
+        isShowing: Binding<Bool>,
+        items: [T],
+        title: String,
+        configuration: UIConfiguration = .init(),
+        onItemSelection: @escaping (T) -> Void,
+        @ViewBuilder content: @escaping (T) -> ItemView
+    ) -> some View {
+        self.overlay(
+            AwesomeBottomSheetView(
+                isShowing: isShowing,
+                title: title,
+                items: items,
+                onItemSelection: onItemSelection,
+                content: content,
+                configuration: configuration
+            )
+        )
+    }
+    
+    public func awesomeSheet<ItemView: View, T: Identifiable>(
+        isShowing: Binding<Bool>,
+        items: [T],
+        title: String,
+        configuration: UIConfiguration = .init(),
+        onItemSelection: @escaping (T) -> Void,
+        @ViewBuilder content: @escaping (T) -> ItemView,
+        bottomContent: @escaping () -> AnyView
+    ) -> some View {
+        self.overlay(
+            AwesomeBottomSheetView(
+                isShowing: isShowing,
+                title: title,
+                items: items,
+                onItemSelection: onItemSelection,
+                content: content,
+                configuration: configuration,
+                bottomContent: bottomContent
+            )
+        )
     }
 }
