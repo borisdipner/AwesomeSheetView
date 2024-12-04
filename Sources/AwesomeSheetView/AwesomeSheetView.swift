@@ -58,6 +58,8 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
                     ScrollView {
                         contentSection
                     }
+                    .padding(.top, contentTopPadding)
+                    .padding(.bottom, contentBottomPadding)
                     .frame(height: countContentHeight())
                     if let bottomContent = bottomContent {
                         bottomContent()
@@ -121,8 +123,6 @@ struct AwesomeBottomSheetView<ItemView: View, T: Identifiable>: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, contentTopPadding)
-        .padding(.bottom, contentBottomPadding)
     }
     
     @ViewBuilder
